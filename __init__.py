@@ -2,13 +2,14 @@ import mcpi.minecraft as minecraft
 import mcpi.block as block
 import mcpi.minecraftstuff as minecraftstuff
 import anyio.GPIO as GPIO
+import time
 
 class DummyPrompt():
-    def say(msg):
+    def say(self, msg):
         print(msg)
 
 
-    def wait():
+    def wait(self):
         raw_input("?") # python2
 
 
@@ -17,13 +18,15 @@ class Prompt():
         self.mc   = mc
         self.gpio = gpio
         self.pin  = pin
+        gpio.setup(pin, gpio.IN)
 
 
-    def say(msg):
+    def say(self, msg):
+        print("SAY:" + str(msg))
         self.mc.postToChat(msg)
 
 
-    def wait():
+    def wait(self):
         print("WAIT...")
         # wait for press
         while self.gpio.input(self.pin) == True:
@@ -37,12 +40,13 @@ class Prompt():
 
 
 mc = None
+prompt = None
 
 def connect():
     global mc, prompt
     mc = minecraft.Minecraft.create()
-    # prompt = Prompt(mc, GPIO, 4)
-    prompt = DummyPrompt()
+    prompt = Prompt(mc, GPIO, 4)
+    #prompt = DummyPrompt()
 
     mc.postToChat("READY!")
 
@@ -96,7 +100,7 @@ def sequence():
     prompt.say("SEQUENCE")
     prompt.wait()
     
-    prompt.say("Put you your left hand")
+    prompt.say("Put up your left hand")
     prompt.wait()
 
     prompt.say("Put up your right hand")
@@ -127,8 +131,8 @@ def loops():
     prompt.say("    Clap once")
     prompt.say("    wait 1 second")
 
-    time.sleep(2)
-    prompt.say("(keep going, this is fun!)")
+    time.sleep(3)
+    prompt.say("(keep going - this is fun!)")
 
     prompt.wait()
 
@@ -168,7 +172,9 @@ def clear():
     pos = mc.player.getTilePos()
     prompt.say("let's clear 10 blocks")
 
-    mc.setBlocks(pos.x-5, pos.y-1, pos.y-5, pos.x+5, pos.z+5, pos.z+5, block.AIR.id)
+    # in case we are using a 'flat' world, make sure there is a bit of bottom!
+    mc.setBlocks(pos.x-5, pos.y-2, pos.z-5, pos.x+5, pos.y-10, pos.z+5, block.STONE.id)
+    mc.setBlocks(pos.x-5, pos.y-1, pos.z-5, pos.x+5, pos.y+10, pos.z+5, block.AIR.id)
     mc.postToChat("BANG!")    
 
 
@@ -244,7 +250,7 @@ def house():
 
     prompt.wait()
     pos = mc.player.getTilePos()
-    mc.setBlocks(pos.x+2, pos.y, pos.z+10, pos.x+10, pos.y+10, pos.z+20)
+    mc.setBlocks(pos.x+2, pos.y, pos.z+10, pos.x+10, pos.y+10, pos.z+20, block.GOLD_BLOCK.id)
     mc.postToChat("KER-CHING!")
     
 
@@ -265,7 +271,7 @@ def maze():
     # This is the name of the file to read maze data from.
     # It is a constant, so that you can change it easily to read from
     # other data files in the future
-    FILENAME = "mc_keynote/maze.csv"
+    FILENAME = "mc_keynote/maze1.csv"
 
     # Open the file containing your maze data
     f = open(FILENAME, "r")
@@ -283,35 +289,36 @@ def maze():
     z = ORIGIN_Z
 
     # Loop around every line of the file
-        for line in f.readlines():
-            # Split the line into parts, wherever there is a comma
-            data = line.split(",")
-  
-            # Restart the x coordinate every time round the "for line" loop
-            x = ORIGIN_X
-  
-            # This is a nested loop (a loop inside another loop)
-            # It loops through every item in the "data" list
-            # It loops through cells, just like cells in a spreadsheet
-            for cell in data:
-                # Check if this cell of data is a gap or a wall
-                if cell == "0": # f.readlines read it in as a string, so use quotes
-                    # choose the gap block id
-                    b = GAP
-                else:
-                    # otherwise choose the wall block id
-                    b = WALL
-      
-                # build two layers of the required block id (held in the b variable)
-                mc.setBlock(x, ORIGIN_Y, z, b)
-                mc.setBlock(x, ORIGIN_Y+1, z, b)
-    
-                # build one layer of floor underneath it
-                mc.setBlock(x, ORIGIN_Y-1, z, FLOOR)
-    
+    for line in f.readlines():
+        data = line.strip()
+        # Split the line into parts, wherever there is a comma
+        data = line.split(",")
+
+        # Restart the x coordinate every time round the "for line" loop
+        x = ORIGIN_X
+
+        # This is a nested loop (a loop inside another loop)
+        # It loops through every item in the "data" list
+        # It loops through cells, just like cells in a spreadsheet
+        for cell in data:
+            # Check if this cell of data is a gap or a wall
+            if cell == "0": # f.readlines read it in as a string, so use quotes
+                # choose the gap block id
+                b = GAP
+            else:
+                # otherwise choose the wall block id
+                b = WALL
+
+            # build two layers of the required block id (held in the b variable)
+            mc.setBlock(x, ORIGIN_Y, z, b)
+            mc.setBlock(x, ORIGIN_Y+1, z, b)
+
+            # build one layer of floor underneath it
+            mc.setBlock(x, ORIGIN_Y-1, z, FLOOR)
+
             # move to the next x coordinate at the end of this "for cell" loop
             x = x + 1
-    
+
         # move to the next z coordinate at the end of this "for line" loop
         z = z + 1
 
@@ -426,7 +433,7 @@ def maths():
     prompt.say("- pythagoras - distance between points")
     time.sleep(1)
     
-    prompt.say("def distanceBetweenPoints(point1, point2):")
+    prompt.say("def distanceBetweenPoints(point1 point2):")
     time.sleep(0.25)
     prompt.say("    xd = point2.x - point1.x")
     time.sleep(0.25)
@@ -565,14 +572,13 @@ menu_data = [
     (9,   "Build a house",        house),
     (10,  "Build a maze",         maze),
     (11,  "Block friend",         friend),
-    (12,  "Detonator button",     detonator),
-    (13,  "Where is the maths",   maths),
-    (14,  "Other topics",         other_topics),
-    (15,  "Quotes",               quotes),
-    (16,  "Takeaways",            takeaways),
-    (17,  "Microbit",             microbit),
-    (18,  "Disaster!",            disasters),
-    (19,  "Post evaluation",      eval2),
+    (12,  "Where is the maths",   maths),
+    (13,  "Other topics",         other_topics),
+    (14,  "Quotes",               quotes),
+    (15,  "Takeaways",            takeaways),
+    (16,  "Microbit",             microbit),
+    (17,  "Disaster!",            disasters),
+    (18,  "Post evaluation",      eval2),
     ('q', "Finished",             finished)
 ]
 
