@@ -1,7 +1,7 @@
 import mcpi.minecraft as minecraft
 import mcpi.block as block
 import mcpi.minecraftstuff as minecraftstuff
-#import anyio.GPIO as GPIO
+import anyio.GPIO as GPIO
 
 class DummyPrompt():
     def say(msg):
@@ -59,7 +59,7 @@ def countdown():
     mc_clock.draw_face(pos)
     time.sleep(3)
 
-    audio.play("babcock_keynote/countdown.wav")
+    audio.play("mc_keynote/countdown.wav")
     for secs in range(30):
         mc_clock.draw_secs(secs, block.GOLD_BLOCK.id)
         time.sleep(1)
@@ -74,13 +74,13 @@ def eval1():
     prompt.say("Put up your hand")
     prompt.wait()
 
-    prompt.say("IF you've never HEARD of minecraft, THEN put your hand down")
+    prompt.say("IF you've never HEARD of minecraft THEN put your hand down")
     prompt.wait()
 
-    prompt.say("IF you've never USED minecraft, THEN put your hand down")
+    prompt.say("IF you've never USED minecraft THEN put your hand down")
     prompt.wait()
 
-    prompt.say("IF you've never CODED in python, THEN put your hand down")
+    prompt.say("IF you've never CODED in python THEN put your hand down")
     prompt.wait()
 
 
@@ -188,12 +188,9 @@ def house():
     mc.setBlocks(x+1, y-1, z+1, x+SIZE-2, y-1, z+SIZE-2, block.WOOL.id, 14)
     
 
-
-
 #--------------------------------------------------------------------------------
 
 def maze():
-    FILENAME = "maze.csv"
 
     # Define some constants for the different blocks you will use
     # to build your maze out of. This allows you to experiment with
@@ -205,7 +202,7 @@ def maze():
     # This is the name of the file to read maze data from.
     # It is a constant, so that you can change it easily to read from
     # other data files in the future
-    FILENAME = "maze1.csv"
+    FILENAME = "mc_keynote/maze.csv"
 
     # Open the file containing your maze data
     f = open(FILENAME, "r")
@@ -398,6 +395,7 @@ def takeaways():
 #--------------------------------------------------------------------------------
 
 def microbit():
+    # NOTE: this is in a separate repo mc_minecraft
     #   Here is something we built with a 12 year old at computer club
     #   show Jamie's minecraft microbit
     #   hit button A, scrolls 'Hello' on the screen
@@ -407,6 +405,7 @@ def microbit():
 #--------------------------------------------------------------------------------
 
 def disasters():
+    # NOTE: this is elsewhere, not in github (yet?)
     # run natural_disasters code (might do this interactively?)
     # import natural_disasters as nd
     # pos = mc.player.getTilePos()
@@ -490,11 +489,6 @@ def menu():
         show_menu(menu_data)
         item = get_choice(menu_data)
         item[2]()
-
-
-def reload():
-    pass 
-    # TODO do a module.reload(me) in case it was edited by programmer.
 
 
 if __name__ == "__main__":
