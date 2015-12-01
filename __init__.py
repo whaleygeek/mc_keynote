@@ -24,6 +24,7 @@ class Prompt():
 
 
     def wait():
+        print("WAIT...")
         # wait for press
         while self.gpio.input(self.pin) == True:
             time.sleep(0.1)
@@ -71,85 +72,133 @@ def countdown():
 #--------------------------------------------------------------------------------
 
 def eval1():
+    prompt.say("EVALUATION")
+    prompt.wait()
+    
     prompt.say("Put up your hand")
     prompt.wait()
 
-    prompt.say("IF you've never HEARD of minecraft THEN put your hand down")
+    prompt.say("IF you've never HEARD of minecraft")
+    prompt.say("THEN put your hand down")
     prompt.wait()
 
-    prompt.say("IF you've never USED minecraft THEN put your hand down")
+    prompt.say("IF you've never USED minecraft")
+    prompt.say("THEN put your hand down")
     prompt.wait()
 
-    prompt.say("IF you've never CODED in python THEN put your hand down")
-    prompt.wait()
+    prompt.say("IF you've never CODED in python")
+    prompt.say("THEN put your hand down")
 
 
 #--------------------------------------------------------------------------------
 
 def sequence():
-    pass
-    #  cs unplugged process - sequence, selection, loops
-    #  minecraft chat:
-    #    put up left hand, delay
-    #    put up right hand, delay
-    #    put down both hands
+    prompt.say("SEQUENCE")
+    prompt.wait()
+    
+    prompt.say("Put you your left hand")
+    prompt.wait()
+
+    prompt.say("Put up your right hand")
+    prompt.wait()
+
+    prompt.say("Put down both hands")
 
 
 #--------------------------------------------------------------------------------
 
 def selection():
-    pass
-    #  minecraft chat:
-    #    if you are a girl, put up left hand, delay
-    #    put down your hand
+    prompt.say("SELECTION")
+    prompt.wait()
 
+    prompt.say("IF you are a girl")
+    prompt.say("THEN put up your left hand")
+
+    prompt.wait()
+    prompt.say("Put down your hand")
+    
 #--------------------------------------------------------------------------------
 
 def loops():
-    pass
-    #  minecraft chat:
-    #    until I say stop, delay
-    #      clap once
-    #      wait 1 second
-    #    (3 times) STOP!
+    prompt.say("LOOPS")
+    prompt.wait()
+
+    prompt.say("UNTIL I say STOP")
+    prompt.say("    Clap once")
+    prompt.say("    wait 1 second")
+
+    time.sleep(2)
+    prompt.say("(keep going, this is fun!)")
+
+    prompt.wait()
+
+    prompt.say("STOP!")
 
 
 #--------------------------------------------------------------------------------
 
 def whatis():
-    pass
-    #    virtual Lego, never run out of bricks - it's a platform to build on
-    #    survival mode, creative mode*
-    #    moving (WASD space)
-    #    building (E, left click, right click)
-    #    coding...
+    prompt.say("What is Minecraft?")
+    prompt.wait()
 
+    prompt.say("- virtual lego")
+    time.sleep(1)
+    prompt.say("  never run out of bricks!")
+    prompt.wait()
+
+    prompt.say("- survival mode and creative mode")
+    time.sleep(1)
+    prompt.say("  limited resources you must mine")
+    time.sleep(1)
+    prompt.say(" vs unlimited resources")
+    prompt.wait()
+
+    prompt.say("- you can code it in Python!")
+    
+     
 
 #--------------------------------------------------------------------------------
 
 def clear():
-    pass
-    # Get the player position
-    #pos = mc.player.getTilePos()
+    prompt.say("Let's clear some space...")
+    time.sleep(1)
+    prompt.say("Move your player to somewhere")
+    prompt.wait()
 
-    # Ask the user how big a space to clear
-    #size = int(raw_input("size of area to clear? "))
+    pos = mc.player.getTilePos()
+    prompt.say("let's clear 10 blocks")
 
-    # Clear a space size by size*size*size, by setting it to AIR
-    #mc.setBlocks(pos.x, pos.y, pos.z, pos.x+size, pos.y+size, pos.z+size,
-    #             block.AIR.id)
+    mc.setBlocks(pos.x-5, pos.y-1, pos.y-5, pos.x+5, pos.z+5, pos.z+5, block.AIR.id)
+    mc.postToChat("BANG!")    
 
 
 #--------------------------------------------------------------------------------
 
 def trampoline():
-    pass
-    # TRAMPOLINE() bouncing on a block, input and output in minecraft
+    prompt.say("What about a trampoline?")
+    time.sleep(1)
+
+    pos = mc.player.getTilePos()
+    mc.setBlock(pos.x, pos.y-1, pos.z, block.WOOL.id, 14)
+
+    mc.player.setTilePos(pos.x, pos.y, pos.z-2)
+    prompt.say("Stand on the wool mat for some magic!")
+
+    while True:
+        time.sleep(0.1)
+        pos = mc.player.getTilePos()
+        b = mc.getBlock(pos.x, pos.y-1, pos.z)
+        if b == block.WOOL.id:
+            mc.player.setTilePos(pos.x, pos.y+20, pos.z)
+            mc.postToChat("YIPPEE!!")
 
 
 #--------------------------------------------------------------------------------
 
 def house():
+    prompt.say("How about a house to keep you safe?")
+    prompt.wait()
+    
     # Get the players position
     pos = mc.player.getPos()
 
@@ -186,12 +235,26 @@ def house():
 
     # Add a woolen carpet, the colour is 14, which is red.
     mc.setBlocks(x+1, y-1, z+1, x+SIZE-2, y-1, z+SIZE-2, block.WOOL.id, 14)
+
+    prompt.say("There you go - have a walk around your new house!")
+    time.sleep(2)
+    prompt.say("Did I tell you that you owe me 500 thousand pounds?!")
+    time.sleep(2)
+    prompt.say("(payment in mcpi.block.GOLD_BLOCK's please!)")
+
+    prompt.wait()
+    pos = mc.player.getTilePos()
+    mc.setBlocks(pos.x+2, pos.y, pos.z+10, pos.x+10, pos.y+10, pos.z+20)
+    mc.postToChat("KER-CHING!")
     
 
+    
 #--------------------------------------------------------------------------------
 
 def maze():
-
+    prompt.say("Mazes use data files (CSV)")
+    prompt.wait()
+    
     # Define some constants for the different blocks you will use
     # to build your maze out of. This allows you to experiment with
     # different blocks and create interesting mazes
@@ -252,11 +315,21 @@ def maze():
         # move to the next z coordinate at the end of this "for line" loop
         z = z + 1
 
-
+    prompt.say("Can you solve the maze?")
+    time.sleep(2)
+    prompt.say("Remember you can fly - double tap space!")
+    time.sleep(2)
+    prompt.say("...but that is CHEATING!")
+    
 
 #--------------------------------------------------------------------------------
 
 def friend():
+    prompt.say("How about an intelligent block?")
+    prompt.wait()
+    
+    prompt.say("Let me introduce you to Kevin... he's shiney!")
+    
     import math
     import time
 
@@ -310,7 +383,7 @@ def friend():
             #print distance
             if distance <= 1:
                 blockMood = "happy"
-                mc.postToChat("<block> Awww thanks. Lets go.")
+                mc.postToChat("<block> Awww thanks. Lets go!")
 
         #move block to the target
         if friend != target:
@@ -341,93 +414,135 @@ def friend():
 #--------------------------------------------------------------------------------
 
 def maths():
-    pass
-    #  where's the maths?
-    #    coordinates
-    #    variables
-    #    distance between points (pythagoras)
+    prompt.say("But where is the maths?")
+    prompt.wait()
 
+    prompt.say("- coordinates (3D x/y/z)")
+    prompt.wait()
+
+    prompt.say("- variables (algebra)")
+    prompt.wait()
+
+    prompt.say("- pythagoras - distance between points")
+    time.sleep(1)
+    
+    prompt.say("def distanceBetweenPoints(point1, point2):")
+    time.sleep(0.25)
+    prompt.say("    xd = point2.x - point1.x")
+    time.sleep(0.25)
+    prompt.say("    yd = point2.y - point1.y")
+    time.sleep(0.25)
+    prompt.say("    zd = point2.z - point1.z")
+    time.sleep(0.25)
+    prompt.say("    return math.sqrt((xd*xd)+(yd*yd)+(zd*zd))")
+    
+    
 #--------------------------------------------------------------------------------
 
 def other_topics():
-    pass
-    #  other topics? A few slides, tab over to PDF with these pictures on
-    #    gemma 'programming with hammers' - teaches binary
-    #    building school in minecraft (twitter)
-    #    electronics - doing a workshop later
-    #    history - archaeological dig in minecraft pics from twitter steven
-    #    social interaction - multiplayer mode, rules "don't burn down his house"
+    prompt.say("What about other topics?")
+    prompt.say("Electronics?")
+    prompt.wait()
 
+    prompt.say("Social interaction?")
+    time.sleep(1)
+    prompt.say("Rule 1: Don't burn down someone's house")
+    prompt.wait()
+    
+    prompt.say("History? Archaeology?")
+ 
 
 #--------------------------------------------------------------------------------
 
 def quotes():
-    pass
-    #   quotes from teachers:
-    #     my kids *WANT* to do screen dumps
-    #     [anon]
+    prompt.say("What do people say about it...")
+    prompt.wait()
 
-    #     after 180 children came to see a minecraft assembly, 45 were knocking on the
-    #     door the next day wanting to set up a minecraft coding club.
-    #     [Secondary school in Essex]
+    prompt.say("my kids *WANT* to do screen dumps")
+    prompt.wait()
 
-    #     I set assignmets in minecraft, I mark the kids homework in minecraft
-    #     [SEN School in Bedfordshire]
+    prompt.say("180 children came to your assembly...")
+    time.sleep(1)
+    prompt.say("next day 45 were knocking on my door")
+    prompt.say("they wanted to set up minecraft coding club!")
+    time.sleep(1)
+    prompt.say("Yes that's ONE QUARTER!!")
+    prompt.wait()
 
-    #   never underestimate how much attention you will get from kids when you
-    #   say the word 'minecraft'
-    #   [maker from cheshire]
+    prompt.say("I set assignments in minecraft")
+    prompt.say("I mark the kids homework in minecraft")
+    time.sleep(1)
+    prompt.say("[SEN School in Bedfordshire]")
+    prompt.wait()
 
+    prompt.say("Never underestimate how much attention you get from kids")
+    prompt.say("when you say the word MINECRAFT!")
+    time.sleep(1)
+    prompt.say("[workshop leader from Cheshire]")
+    
 
 #--------------------------------------------------------------------------------
 
 def takeaways():
-    pass
-    #     Minecraft is a platform
-    #     Children want to use it
-    #     You can code it
-    #     Children will bring their own ideas
-    #     You don't have to be an expert, be a coach
-    #     Its free and pre-installed on Raspberry Pi
-    #     You can do this on mac/pc also
-    #     Minecraft EDU for classroom licences
+    prompt.say("What can you take away from this talk?")
+    prompt.wait()
+
+    prompt.say("1. Minecraft is a platform")
+    prompt.wait()
+
+    prompt.say("2. Children WANT to use it")
+    prompt.wait()
+
+    prompt.say("3. You can learn coding with it")
+    prompt.wait()
+
+    prompt.say("4. Children will bring their own ideas")
+    prompt.wait()
+
+    prompt.say("5. It's free and pre-installed on Raspberry Pi")
+    prompt.wait()
+
+    prompt.say("6. School site licences for use on PC/Mac ")
+
 
 #--------------------------------------------------------------------------------
 
 def microbit():
-    # NOTE: this is in a separate repo mc_minecraft
-    #   Here is something we built with a 12 year old at computer club
-    #   show Jamie's minecraft microbit
-    #   hit button A, scrolls 'Hello' on the screen
-    #   hit button B, scrolls 'Fun?" on the screen
-    #   hit pad 0, scrolls 'THE END' on the screen.
+    prompt.say("Has anyone heard about the BBC micro:bit??")
+    time.sleep(2)
+    prompt.say("... 12 year old Jamie built one in Minecraft!!")
 
+    print("DO: python    import mc_minecraft as m")
+
+    
 #--------------------------------------------------------------------------------
 
 def disasters():
-    # NOTE: this is elsewhere, not in github (yet?)
-    # run natural_disasters code (might do this interactively?)
-    # import natural_disasters as nd
-    # pos = mc.player.getTilePos()
-    # x = pos.x
-    # z = pos.z
-    # nd.metor(x, z)
-    # nd.geyser(x+20, z)
-    # nd.earthquake(x+40, z)
-    # nd.eruption(x+60, z)
-    pass
+    prompt.say("Oh no it's a disaster....")
+    time.sleep(1)
+    prompt.say("Look what a 10 year old built with code...")
+
+    print("DO: python    import natural_disasters")
+    print("meteor_shower, geyser, earthquake, eruption")
 
 
 #--------------------------------------------------------------------------------
 
 def eval2():
-    pass
-    #   1. Have you heard of minecraft?
-    #   2. Will you try minecraft?
-    #   3. Will you try coding in python (with minecraft)?
-    #   4. Come to my workshops later!
+    prompt.say("Let's check again...")
+    prompt.say("Have you heard of minecraft?")
+    prompt.wait()
 
+    prompt.say("Will you try minecraft?")
+    prompt.wait()
 
+    prompt.say("Will you try coding in Python?")
+    time.sleep(2)
+    prompt.say("P.S. Come to my workshops later!")
+
+    print("DO: Play closing video")
+
+    
 #----- MENU ---------------------------------------------------------------
 
 quit_menu = False
